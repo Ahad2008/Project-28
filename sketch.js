@@ -1,54 +1,50 @@
+
 const Engine = Matter.Engine;
 const World = Matter.World;
 const Bodies = Matter.Bodies;
 const Body = Matter.Body;
 const Constraint = Matter.Constraint;
+var tree, treeImg, stone, stoneImg, ground, boy, boyImg;
 
-var ground, tree, boy, stone;
-var mango1, mongo2, mango3, mango4, mango5, mango6, mango7;
-var stoneThrow;
- 
-function preload()
-{
 
-}
 
-function setup() 
-{
-	createCanvas(1500, 800);
+function setup() {
+	createCanvas(3000, 700);
+
 
 	engine = Engine.create();
 	world = engine.world;
 
-	stone = new Stone(150,600,40);
-
-	mango1 = new Mango(1000,300,60);
-	mango2 = new Mango(1100,250,60);
-	mango3 = new Mango(1200,200,60);
-	mango4 = new Mango(1200,300,60);
-	mango5 = new Mango(1100,370,60);
-	mango6 = new Mango(1350,300,60);
-	mango7 = new Mango(1270,350,60);
-
-	//ground = new Ground(750,800,1500,20);
-
-	boy = new Boy(500, 650, 400, 500);
-
-	tree = new Tree(1150, 450, 700, 700);
-	
-	stoneThrow = new Throw(stone.body, {x:480,y:500});
+	stone = new Stone(160,500,20);
+	mango1 = new Mango(1300,300,30);
+	mango2 = new Mango(1400,250,30);
+	mango3 = new Mango(1300,200,30);
+	mango4 = new Mango(1390,300,30);
+	mango5 = new Mango(1300,300,30);
+	mango6 = new Mango(1200,300,30);
+  mango7 = new Mango(1500,280,30);
+  tree = new Tree(1300,680);
+  ground = new Ground(0,680,40000,20);
+	boy = new Boy(250,600);
+	chain = new Chain(stone.body,{x:160, y:500});
 
 	Engine.run(engine);
-	
+  
 }
 
-function draw() 
-{
+
+function draw() {
   rectMode(CENTER);
-  background(200);
+  background(500);
 
+  background("pink")
+  fill('blue');
+  textSize(24);
+  text("PRESS SPACE TO GET A SECOND CHANCE TO PLAY", 200,200);
+  ground.display();
   tree.display();
-
+  boy.display();
+  stone.display();
   mango1.display();
   mango2.display();
   mango3.display();
@@ -56,44 +52,39 @@ function draw()
   mango5.display();
   mango6.display();
   mango7.display();
+  chain.display();
 
-  stone.display();
-  stoneThrow.display();
-//	ground.display();
+  detectCollision(stone, mango1);
+  detectCollision(stone, mango2);
+  detectCollision(stone, mango3);
+  detectCollision(stone, mango4);
+  detectCollision(stone, mango5);
+  detectCollision(stone, mango6);
+  detectCollision(stone, mango7);
 
-	boy.display();
-
-	detectCollision (stone, mango1)
-	detectCollision (stone, mango2)
-	detectCollision (stone, mango3)
-	detectCollision (stone, mango4)
-	detectCollision (stone, mango5)
-	detectCollision (stone, mango6)
-  detectCollision (stone, mango7)
+  drawSprites();
+ 
 }
 
 function mouseDragged(){
-    Matter.Body.setPosition(stone.body, {x: mouseX, y: mouseY});
+    Matter.Body.setPosition(stone.body,{x:mouseX, y:mouseY});
 }
-
 function mouseReleased(){
-    stoneThrow.fly();
+    chain.fly();
 }
-
-function keyPressed() {
-  if (keyCode === 32) {
-    Matter.Body.setPosition(stone.body, {x: 150, y: 600});
-    stoneThrow.attach(stone.body);
+function keyPressed(){
+  if(keyCode === 32){
+    Matter.Body.setPosition(stone.body,{x:160, y:500});
+    chain.attach(stone.body);
   }
 }
+function detectCollision(lstone,lmango){
+  stoneBodyPosition = lstone.body.position;
+  mangoBodyPosition = lmango.body.position;
 
-function detectCollision (lstone,lmango) {
+  var distance = dist(stoneBodyPosition.x, stoneBodyPosition.y, mangoBodyPosition.x, mangoBodyPosition.y);
+  if(distance <= lmango.r + lstone.r){
+    Matter.Body.setStatic(lmango.body, false);
+  }
 
-	mangoBodyPosition = lmango.body.position;
-	stoneBodyPosition = lstone.body.position;
-
-	var distance = dist(stoneBodyPosition.x,stoneBodyPosition.y,mangoBodyPosition.x,mangoBodyPosition.y)
-		if (distance <= lmango.radius + lstone.radius) {
-			Matter.Body.setStatic(lmango.body, false);
-		}
 }
